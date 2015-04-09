@@ -1,2 +1,130 @@
 = JBake AsciiDoc Quickstart
 
+The JBake AsciiDoc Quickstart project is all you need to deploy your blog or website hosted on GitHub with content based on AsciiDoc. This project combines the power of AsciiDoc with JBake as a publishing framework on top of GitHub's publishing infrastructure.
+
+== Directions
+
+The goal of this procedure set is to configure a Travis job to listen for commits on the _jbake_ branch, automatically "bake" the website using JBake, and push the generated content to the _master_ or _gh-pages_ branch, depending on configuration.
+
+== {counter:directions}. Configuration
+
+There are some variables you need to edit in the `pom.xml` file:
+
+  <github.site.repositoryName>USERNAME.github.io</github.site.repositoryName>
+  <github.site.repositoryOwner>USERNAME</github.site.repositoryOwner>
+  <github.site.branch>master</github.site.branch>
+
+- If you want to use GitHub's Personal Pages, the generated content for your website will have to be published on the `master` branch, your repo has to be named `username.github.io` and it will be available at http://username.github.io.
+- If you want to use GitHub's Project Pages, the generated content for your website will have to be published on the `gh-pages` branch, your repo could have any name (you might want to rename the fork, from `jbake-asciidoc-quickstart` to `blog` for example) and it will be available at http://username.github.io/jbake-asciidoc-quickstart or http://username-github.io/blog, depending on the repository name.
+
+You might want to add a `src/jbake/content/CNAME` file with a custon domain that has CNAME DNS record poiting to `username.github.io`. That way you could access your website at http://www.username.com/ or http://www.username.con/blog, depending on your configuration.
+
+For this to work you can just create a file with the domain name:
+
+  $ echo "www.username.com" > src/main/jbake/assets/CNAME
+
+=== {counter:directions}. Install Minimum Requirements
+
+You must install some software to execute commands in the next steps:
+
+For Fedora:
+
+  $ sudo yum -y install ruby rubygems
+
+=== {counter:directions}. Install Travis Gem
+
+When you install rubygems, you can use the gem internal package management system to install the Travis CI gem. This gem contains--among other things--a command-line tool for easily encrypting GitHub tokens.
+
+Run the following command to install the Travis gem:
+
+  $ gem install travis
+
+=== {counter:directions}. Fork this Repository and Clone
+
+To create your own copy of this repository, start by clicking the fork button in the upper right corner of the GitHub page.
+
+Next, open a command line window and make a clone of your new repository:
+
+  $ git clone https://github.com/YOUR-USERNAME/jbake-asciidoc-quickstart
+
+=== {counter:directions}. Enable Travis CI
+
+Travis CI is configured initially through a browser.
+
+To activate Travis CI for the Repository:
+
+. Open https://travis-ci.org and create an account.
+. Open your https://travis-ci.org/profile/[profile page] on Travis.
+. Find the jbake-asciidoc-quickstart repository, and turn on the switch.
+. Click on repository settings (next to the switch) and enable “Build only if .travis.yml is present.”
+
+=== {counter:directions}. Generate a GitHub Personal Access Token
+
+Once the repository is activated in Travis, you need a GitHub token to pass into the Travis keytool.
+
+To generate a new personal access token on GitHub:
+
+. Open https://github.com/settings/tokens/new.
+. Select the scope _public_repository_, and add a description.
+. Confirm and save the settings.
+
+=== {counter:directions}. Encrypt the GitHub Token for Travis CI
+
+With the GitHub token created, you can now pass it to the Travis command-line tool, which adds the encrypted value to a file in your repository.
+
+To encrypt the token and add it to the `.travis.yml` file in your cloned repository:
+
+. Move into the same directory as `env.global`.
+. Run the following command, replacing `<token>` with the GitHub token from the previous step.
+
+  $ travis encrypt GH_TOKEN=<token> --add env.global
+
+. Verify the script added the `secure` global environment variable to `.travis.yml`:
++
+[source, yaml]
+----
+env:
+  global:
+    secure: [YOUR-ENCRYPTED-TOKEN]
+----
++
+. Commit all changes, and push to GitHub.
+
+  $ git push
+
+=== {counter:directions}. Verify the Configuration
+
+To verify if you have configured the repository correctly, open https://travis-ci.org and verify that Travis starts, and subsequently finishes processing the job.
+
+Travis should place the built site into the _gh-pages_ branch upon completion.
+
+== Summary
+
+If you can load the `[username].github.io/jbake-asciidoc-quickstart/index.html` home page, you have successfully completed basic configuration.
+
+Start writing blog posts and enjoy the AsciiDoc difference, regardless of what device you choose: computer, tablet, or mobile.
+
+= Details
+
+== GitHub Pages and AsciiDoc
+
+Unlike some "fork and write" repositories that exist for Markdown blogs, you need to initially configure this repository fork with a computer to publish using AsciiDoc.
+
+=== How We Work Around The Limitation
+
+For this repository, the https://travis-ci.org/[Travis CI] Continuous Integration (CI) server emulates GitHub Pages staging automation, and pushes your blog live upon committing any change to the repository.
+
+After initially configuring the repository, you can use Git command-line on your computer, or even a Git client on your tablet or smartphone to write, commit, and automatically publish blog posts.
+
+== Repository Structure
+
+The repository requires the following structure to work correctly:
+
+* **jbake**, this branch is used for markup sources and configuration.
+
+You have to decide what branch hosts generated content. You have two choices:
+
+* **master**, if you want to host a personal GitHub Pages account. For this to work your repo needs to be named `USERNAME.github.io`, and you need to configure this branch name in the `pom.xml` file. Your website will be available in http://username.github.io
+* **gh-pages**, this branch is used for `project` GitHub Pages, in the username.github.io domain. Your website will be available in http://username.github.io/jbake-asciidoc-quickstart/
+
+
