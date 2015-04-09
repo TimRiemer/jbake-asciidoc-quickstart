@@ -6,6 +6,11 @@ The JBake AsciiDoc Quickstart project is all you need to deploy your blog or web
 
 The goal of this procedure set is to configure a Travis job to listen for commits on the _jbake_ branch, automatically "bake" the website using JBake, and push the generated content to the _master_ or _gh-pages_ branch, depending on configuration.
 
+More information:
+
+- JBake: http://www.jbake.org
+- AsciiDoc: http://www.asciidoc.org
+
 == {counter:directions}. Configuration
 
 There are some variables you need to edit in the `pom.xml` file:
